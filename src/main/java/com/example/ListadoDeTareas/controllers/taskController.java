@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ListadoDeTareas.dao.taskDao;
 import com.example.ListadoDeTareas.models.Task;
+import com.example.ListadoDeTareas.models.TaskResponse;
 
 @RestController
 public class taskController {
@@ -21,4 +22,20 @@ public class taskController {
 
         return taskDao.getTaskList();
     }
+
+    @RequestMapping(value = "/deleteTask", method = RequestMethod.DELETE)
+    public TaskResponse eliminarTarea(Task task){
+        return taskDao.deleteTask(task.getId());
+    }
+    
+    @RequestMapping(value = "/newTask", method = RequestMethod.POST)
+    public void nuevaTarea(Task task){
+        taskDao.newTask(task);
+    }
+
+    @RequestMapping(value = "/updateTask", method = RequestMethod.POST)
+    public TaskResponse actualizarTarea(Task task){
+        return taskDao.updateTask(task);
+    }
+    
 }

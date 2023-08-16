@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.ListadoDeTareas.models.Task;
+import com.example.ListadoDeTareas.models.TaskResponse;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -26,12 +28,30 @@ public class taskDaoImp implements taskDao{
     }
 
     @Override
-    public void deleteTask(long id) {
-
+    public TaskResponse deleteTask(long id) {
+        Task task = entityManager.find(Task.class, id);
+        if (task != null) {
+            entityManager.remove(task);
+            return new TaskResponse(id, "OK", "Task has been deleted");
+        }
+        return new TaskResponse(id, "ERROR", "Task not found");
     }
 
     @Override
     public void newTask(Task task) {
+        entityManager.persist(task);
+    }
+
+    @Override
+    public TaskResponse updateTask(Task task) {
+    
+
+        if (task.getId() != null) {
+            entityManager.merge(task);
+            return new TaskResponse(task.getId(), "OK", "Task modified successfully");
+        }
+
+        return new TaskResponse(-1, "ERROR", "ID not given");
 
     }
 
