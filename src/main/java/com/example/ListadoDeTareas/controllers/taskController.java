@@ -29,8 +29,8 @@ public class taskController {
     }
     
     @RequestMapping(value = "/newTask", method = RequestMethod.POST)
-    public void nuevaTarea(Task task){
-        taskDao.newTask(task);
+    public TaskResponse nuevaTarea(Task task){
+        return taskDao.newTask(task);
     }
 
     @RequestMapping(value = "/updateTask", method = RequestMethod.POST)

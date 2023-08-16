@@ -12,7 +12,7 @@ public interface taskDao {
 
     TaskResponse deleteTask(long id);
 
-    void newTask(Task task);
+    TaskResponse newTask(Task task);
 
     TaskResponse updateTask(Task task);
 }

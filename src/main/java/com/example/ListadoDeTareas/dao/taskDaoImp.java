@@ -38,8 +38,14 @@ public class taskDaoImp implements taskDao{
     }
 
     @Override
-    public void newTask(Task task) {
-        entityManager.persist(task);
+    public TaskResponse newTask(Task task) {
+        if (task.getId() == null) {
+            entityManager.persist(task);
+            return new TaskResponse(task.getId(),"OK","Task Successfully created");
+        }else{
+            return new TaskResponse(task.getId(),"ERROR","Id must be null to create a new task");
+        }
+        
     }
 
     @Override
