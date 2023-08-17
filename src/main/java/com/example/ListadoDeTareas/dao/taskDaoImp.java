@@ -22,6 +22,7 @@ public class taskDaoImp implements taskDao{
     @PersistenceContext
     EntityManager entityManager;
 
+    // Obtener tareas
     @Override
     public List<Task> getTaskList() {
         String query = "FROM Task";
@@ -29,6 +30,7 @@ public class taskDaoImp implements taskDao{
         return resultado;
     }
 
+    // Eliminar tarea por id
     @Override
     public ResponseEntity<TaskResponse> deleteTask(long id, HttpStatus httpStatus) {
         Task task = entityManager.find(Task.class, id);
@@ -41,6 +43,7 @@ public class taskDaoImp implements taskDao{
         ,HttpStatus.BAD_REQUEST);
     }
 
+    // Crear nueva tarea dada una descripcion sin id
     @Override
     public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus) {
         if (task.getId() == null) {
@@ -54,6 +57,7 @@ public class taskDaoImp implements taskDao{
         
     }
 
+    // Modificar una tarea por id
     @Override
     public ResponseEntity<TaskResponse> updateTask(Task task, HttpStatus httpStatus) {
     
@@ -72,6 +76,7 @@ public class taskDaoImp implements taskDao{
         }
         
         TaskResponse taskResponse = new TaskResponse(-1, "ERROR", "ID not given");
+
         return new ResponseEntity<TaskResponse>(taskResponse,HttpStatus.BAD_REQUEST);
 
     }
