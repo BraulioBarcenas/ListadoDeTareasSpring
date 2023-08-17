@@ -2,6 +2,8 @@ package com.example.ListadoDeTareas.dao;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,36 +30,49 @@ public class taskDaoImp implements taskDao{
     }
 
     @Override
-    public TaskResponse deleteTask(long id) {
+    public ResponseEntity<TaskResponse> deleteTask(long id, HttpStatus httpStatus) {
         Task task = entityManager.find(Task.class, id);
         if (task != null) {
             entityManager.remove(task);
-            return new TaskResponse(id, "OK", "Task has been deleted");
+            return new ResponseEntity<TaskResponse>(new TaskResponse(id, "OK", "Task has been deleted")
+            ,HttpStatus.OK);
         }
-        return new TaskResponse(id, "ERROR", "Task not found");
+        return new ResponseEntity<TaskResponse>(new TaskResponse(id, "ERROR", "Task not found")
+        ,HttpStatus.BAD_REQUEST);
     }
 
     @Override
-    public TaskResponse newTask(Task task) {
+    public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus) {
         if (task.getId() == null) {
             entityManager.persist(task);
-            return new TaskResponse(task.getId(),"OK","Task Successfully created");
+            return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"OK","Task Successfully created")
+            ,HttpStatus.OK);
         }else{
-            return new TaskResponse(task.getId(),"ERROR","Id must be null to create a new task");
+            return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"ERROR","Id must be null to create a new task")
+            ,HttpStatus.BAD_REQUEST);
         }
         
     }
 
     @Override
-    public TaskResponse updateTask(Task task) {
+    public ResponseEntity<TaskResponse> updateTask(Task task, HttpStatus httpStatus) {
     
 
         if (task.getId() != null) {
-            entityManager.merge(task);
-            return new TaskResponse(task.getId(), "OK", "Task modified successfully");
-        }
+            Task alreadyCreatedTask = entityManager.find(Task.class, task.getId());
 
-        return new TaskResponse(-1, "ERROR", "ID not given");
+            if (alreadyCreatedTask == null) {
+                TaskResponse taskResponse = new TaskResponse(task.getId(), "ERROR", "There is no task assigned to given ID");
+                return new ResponseEntity<TaskResponse>(taskResponse,HttpStatus.BAD_REQUEST);
+            }
+
+            entityManager.merge(task);
+            TaskResponse taskResponse = new TaskResponse(task.getId(), "OK", "Task modified successfully");
+            return new ResponseEntity<TaskResponse>(taskResponse,HttpStatus.OK);
+        }
+        
+        TaskResponse taskResponse = new TaskResponse(-1, "ERROR", "ID not given");
+        return new ResponseEntity<TaskResponse>(taskResponse,HttpStatus.BAD_REQUEST);
 
     }
 

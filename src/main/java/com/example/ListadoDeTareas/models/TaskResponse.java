@@ -1,5 +1,6 @@
 package com.example.ListadoDeTareas.models;
 
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class TaskResponse {
     @Getter @Setter
     private String status;
     @Getter @Setter
-    private String response;
+    private String message;
     // public TaskResponse(long taskId, String status, String response) {
     //     TaskId = taskId;
     //     this.status = status;

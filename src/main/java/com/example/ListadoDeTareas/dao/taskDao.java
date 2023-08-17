@@ -2,6 +2,9 @@ package com.example.ListadoDeTareas.dao;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import com.example.ListadoDeTareas.models.Task;
 import com.example.ListadoDeTareas.models.TaskResponse;
 
@@ -10,9 +13,9 @@ import com.example.ListadoDeTareas.models.TaskResponse;
 public interface taskDao {
     List<Task> getTaskList();
 
-    TaskResponse deleteTask(long id);
+    ResponseEntity<TaskResponse> deleteTask(long id, HttpStatus httpStatus);
 
-    TaskResponse newTask(Task task);
+    ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus);
 
-    TaskResponse updateTask(Task task);
+    ResponseEntity<TaskResponse> updateTask(Task task, HttpStatus httpStatus);
 }
