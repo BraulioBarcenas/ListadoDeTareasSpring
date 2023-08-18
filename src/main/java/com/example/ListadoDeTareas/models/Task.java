@@ -7,19 +7,27 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
 
 @Entity
+@Data
 @Table(name ="tasks")
 public class Task {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter @Column(name = "id") 
+    @NotBlank
+    @Column(name = "id") 
     private Long id;
-    @Getter @Setter @Column(name = "descripcion")
+
+    @NotBlank
+    @Column(name = "descripcion")
     private String descripcion;
-    @Getter @Setter @Column(name = "estado")
+
+    @NotBlank
+    @Column(name = "estado")
     private String estado;
 
 }
