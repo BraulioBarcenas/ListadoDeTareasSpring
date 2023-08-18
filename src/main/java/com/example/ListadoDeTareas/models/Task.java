@@ -1,6 +1,7 @@
 package com.example.ListadoDeTareas.models;
 
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,9 +19,10 @@ public class Task {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotBlank
     @Column(name = "id") 
     private Long id;
+
+ 
 
     @NotBlank
     @Column(name = "descripcion")

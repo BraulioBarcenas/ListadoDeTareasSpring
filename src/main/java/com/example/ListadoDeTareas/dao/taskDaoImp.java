@@ -46,14 +46,17 @@ public class taskDaoImp implements taskDao{
     // Crear nueva tarea dada una descripcion sin id
     @Override
     public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus) {
+        // entityManager.persist(task);
+        // return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"OK","Task Successfully created")
+        // ,HttpStatus.OK);
         if (task.getId() == null) {
             entityManager.persist(task);
             return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"OK","Task Successfully created")
             ,HttpStatus.OK);
-        }else{
-            return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"ERROR","Id must be null to create a new task")
-            ,HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"ERROR","Id must be null to create a new task")
+        ,HttpStatus.BAD_REQUEST);
+        
         
     }
 

@@ -19,6 +19,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity.authorizeHttpRequests(auth -> {
             auth.anyRequest().authenticated();
+        }).csrf(csrf->{
+            csrf.disable();
         })
         .formLogin(login ->{
             login.successHandler(successHandler()); // Se llama a otra funcion que define a donde se va a mandar una vez inicie sesion
