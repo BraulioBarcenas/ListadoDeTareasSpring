@@ -14,7 +14,7 @@ public interface taskDao {
 
     ResponseEntity<TaskResponse> deleteTask(long id, HttpStatus httpStatus);
 
-    ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus, String tokenHeader);
+    ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus);
 
     ResponseEntity<TaskResponse> updateTask(Task task, HttpStatus httpStatus);
 }

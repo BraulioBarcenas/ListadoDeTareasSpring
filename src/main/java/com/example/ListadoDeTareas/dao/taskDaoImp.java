@@ -52,7 +52,7 @@ public class taskDaoImp implements taskDao{
 
     // Crear nueva tarea dada una descripcion sin id
     @Override
-    public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus, String tokenHeader) {
+    public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus) {
             
         if (task.getId() == null) {
             entityManager.persist(task);
