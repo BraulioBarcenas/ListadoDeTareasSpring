@@ -2,13 +2,15 @@ package com.example.ListadoDeTareas.dao;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.ListadoDeTareas.models.Task;
 import com.example.ListadoDeTareas.models.TaskResponse;
+import com.example.ListadoDeTareas.repositories.UserRepository;
+import com.example.ListadoDeTareas.security.jwt.JwtUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,6 +20,11 @@ import jakarta.persistence.PersistenceContext;
 @Transactional
 @SuppressWarnings("unchecked")
 public class taskDaoImp implements taskDao{
+
+    @Autowired
+    JwtUtils jwtUtils;
+    @Autowired
+    UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -45,10 +52,8 @@ public class taskDaoImp implements taskDao{
 
     // Crear nueva tarea dada una descripcion sin id
     @Override
-    public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus) {
-        // entityManager.persist(task);
-        // return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"OK","Task Successfully created")
-        // ,HttpStatus.OK);
+    public ResponseEntity<TaskResponse> newTask(Task task, HttpStatus httpStatus, String tokenHeader) {
+            
         if (task.getId() == null) {
             entityManager.persist(task);
             return new ResponseEntity<TaskResponse>(new TaskResponse(task.getId(),"OK","Task Successfully created")

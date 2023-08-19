@@ -3,7 +3,9 @@ package com.example.ListadoDeTareas.dao;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ import jakarta.persistence.PersistenceContext;
 @Transactional
 // @SuppressWarnings("unchecked")
 public class userDaoImp implements userDao{
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -37,10 +42,9 @@ public class userDaoImp implements userDao{
 
        UserEntity userEntity = UserEntity.builder()
                 .username(createUserDTO.getUsername())
-                .password(createUserDTO.getPassword())
+                .password(passwordEncoder.encode(createUserDTO.getPassword()))
                 .email(createUserDTO.getEmail())
                 .roles(roles)
-                .tareas(null)
                 .build();
 
         entityManager.persist(userEntity);

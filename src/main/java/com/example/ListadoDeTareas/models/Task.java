@@ -22,8 +22,6 @@ public class Task {
     @Column(name = "id") 
     private Long id;
 
- 
-
     @NotBlank
     @Column(name = "descripcion")
     private String descripcion;

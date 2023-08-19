@@ -1,39 +1,54 @@
-package com.example.ListadoDeTareas.config;
+package com.example.ListadoDeTareas.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.example.ListadoDeTareas.security.filters.JwtAuthenticationFilter;
+import com.example.ListadoDeTareas.security.filters.JwtAuthorizationFilter;
+import com.example.ListadoDeTareas.security.jwt.JwtUtils;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    JwtUtils jwtUtils;
     
+    @Autowired
+    UserDetailsService userDetailsService;
+
+    @Autowired
+    JwtAuthorizationFilter authorizationFilter;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception{
+
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+
         return httpSecurity.authorizeHttpRequests(auth -> {
             auth.anyRequest().authenticated(); 
         }).csrf(csrf->{
             csrf.disable();
         })
-        .formLogin(login ->{
-            login.successHandler(successHandler()); // Se llama a otra funcion que define a donde se va a mandar una vez inicie sesion
-        })
+        // .formLogin(login ->{
+        //     login.successHandler(successHandler()); // Se llama a otra funcion que define a donde se va a mandar una vez inicie sesion
+        // })
         .sessionManagement( session ->{
-            session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS); // Tipo de creacion de sesiones, ALWAYS, IF-REQUIRED, NEVER, STATELESS
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Tipo de creacion de sesiones, ALWAYS, IF-REQUIRED, NEVER, STATELESS
             session.invalidSessionUrl("/login");
             session.maximumSessions(1);  
     
@@ -47,34 +62,34 @@ public class SecurityConfig {
                 // Fixation.none(); // Desactiva la fijacion
             });
             
-        }).httpBasic(t -> {
-            Customizer.withDefaults();
-        })
+        }).addFilter(jwtAuthenticationFilter).addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
     }
     
 
-    @Bean
-    UserDetailsService userDetailsService(){
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User
-                            .withUsername("Braulio")
-                            .password("1234")
-                            .roles()
-                            .build());
-        return manager;
-    }
+  
+
+    // @Bean
+    // UserDetailsService userDetailsService(){
+    //     InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+    //     manager.createUser(User
+    //                         .withUsername("Braulio")
+    //                         .password("1234")
+    //                         .roles()
+    //                         .build());
+    //     return manager;
+    // }
 
     @Bean
     PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
 
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception{
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
-                            .userDetailsService(userDetailsService())
+                            .userDetailsService(userDetailsService)
                             .passwordEncoder(passwordEncoder())
                             .and()
                             .build();
@@ -85,9 +100,10 @@ public class SecurityConfig {
         return new SessionRegistryImpl();
     }
 
-    public AuthenticationSuccessHandler successHandler(){
-        return ((request, response, authentication) -> {
-            response.sendRedirect("/session");
-        });
-    }
+    // public AuthenticationSuccessHandler successHandler(){
+    //     return ((request, response, authentication) -> {
+    //         response.sendRedirect("/session");
+    //     });
+    // }
+
 }

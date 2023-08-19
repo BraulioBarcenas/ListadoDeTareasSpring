@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,10 +43,6 @@ public class UserEntity {
 
     @NotBlank
     private String password;
-
-    @OneToMany(targetEntity = Task.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "user_tasks", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "task_id"))
-    private Set<Task> tareas; 
     
     // CONFIGURACION DE RELACIONES
     //  manera de traerse los datos     a que entidad se hace referencia        accion al eliminar un usuario
